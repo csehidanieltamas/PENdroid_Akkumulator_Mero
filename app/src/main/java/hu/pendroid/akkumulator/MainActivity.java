@@ -27,14 +27,14 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         actvActivity = findViewById(R.id.actvActivity);
 
-        // Edge-to-edge padding (was R.id.main, now our root is drawerLayout)
+        // padding
         ViewCompat.setOnApplyWindowInsetsListener(drawerLayout, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Dropdown items
+        // Dropdown
         String[] activities = {"🎬 Videó", "🎮 Játék", "🎵 Zene", "🗺️ Navigáció"};
         actvActivity.setAdapter(new ArrayAdapter<>(
                 this, android.R.layout.simple_dropdown_item_1line, activities));
