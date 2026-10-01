@@ -1,7 +1,10 @@
 package hu.pendroid.akkumulator;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,5 +45,20 @@ public class MainActivity extends AppCompatActivity {
         // ☰ opens the sidebar
         findViewById(R.id.btnMenu).setOnClickListener(
                 v -> drawerLayout.openDrawer(GravityCompat.START));
+
+        Button btnCalculate = findViewById(R.id.btnCalculate);
+        EditText etCurrentBattery = findViewById(R.id.etCurrentBattery);
+        EditText etTargetReserve = findViewById(R.id.etTargetReserve);
+        EditText etDuration = findViewById(R.id.etDuration);
+        // Dropdown value -> actvActivity
+        EditText etActivityHours = findViewById(R.id.etActivityHours);
+        EditText etActivityRate = findViewById(R.id.etActivityRate);
+
+        btnCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 }
