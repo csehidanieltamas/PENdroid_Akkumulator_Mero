@@ -15,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,18 +49,33 @@ public class MainActivity extends AppCompatActivity {
                 v -> drawerLayout.openDrawer(GravityCompat.START));
 
         Button btnCalculate = findViewById(R.id.btnCalculate);
+        Button btnAddActivity = findViewById(R.id.btnAddActivity);
         EditText etCurrentBattery = findViewById(R.id.etCurrentBattery);
         EditText etTargetReserve = findViewById(R.id.etTargetReserve);
         EditText etDuration = findViewById(R.id.etDuration);
-        // Dropdown value -> actvActivity
         EditText etActivityHours = findViewById(R.id.etActivityHours);
         EditText etActivityRate = findViewById(R.id.etActivityRate);
 
-        btnCalculate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        Map<String, ActivityItem> activity = new HashMap<>();
 
+        btnAddActivity.setOnClickListener(v -> {
+            String hoursStr = etActivityHours.getText().toString().trim();
+            String rateStr = etActivityRate.getText().toString().trim();
+
+            if (!hoursStr.isEmpty() && !rateStr.isEmpty()) {
+                try {
+                    double hours = Double.parseDouble(hoursStr);
+                    double rate = Double.parseDouble(rateStr);
+
+                    activity.put(actvActivity.getText().toString(), new ActivityItem(hours, rate));
+                } catch (NumberFormatException e) {
+                    // error message
+                }
             }
+        });
+
+        btnCalculate.setOnClickListener(v -> {
+
         });
     }
 }
