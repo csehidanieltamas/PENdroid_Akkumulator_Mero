@@ -75,7 +75,34 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnCalculate.setOnClickListener(v -> {
+            String currentBatteryStr = etCurrentBattery.getText().toString().trim();
+            String targetReserveStr = etTargetReserve.getText().toString().trim();
+            String durationStr = etDuration.getText().toString().trim();
 
+            if (!currentBatteryStr.isEmpty() && !targetReserveStr.isEmpty() && !durationStr.isEmpty()) {
+                try {
+                    int currentBattery = Integer.parseInt(currentBatteryStr);
+                    int targetReserve = Integer.parseInt(targetReserveStr);
+                    double duration = Double.parseDouble(durationStr);
+
+                    double passiveConsumption = 100 / duration;
+                    double totalHours = 0;
+                    double totalConsumption = 0;
+
+                    for (ActivityItem item : activity.values()) {
+                        totalHours += item.duration;
+                        totalConsumption += item.duration * item.consumption;
+                    }
+                    int remainingBattery = (int) (currentBattery - (totalConsumption + (passiveConsumption * totalHours)));
+                    if (remainingBattery >= targetReserve) {
+                        // success message
+                    } else {
+                        // warning message
+                    }
+                } catch (NumberFormatException e){
+                    // error message
+                }
+            }
         });
     }
 }
