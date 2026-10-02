@@ -59,14 +59,23 @@ public class MainActivity extends AppCompatActivity {
         Map<String, ActivityItem> activity = new HashMap<>();
 
         btnAddActivity.setOnClickListener(v -> {
-            double hours = Double.parseDouble(etActivityHours.getText().toString());
-            double rate = Double.parseDouble(etActivityRate.getText().toString());
+            String hoursStr = etActivityHours.getText().toString().trim();
+            String rateStr = etActivityRate.getText().toString().trim();
 
-            activity.put(actvActivity.getText().toString(), new ActivityItem(hours, rate));
+            if (!hoursStr.isEmpty() && !rateStr.isEmpty()) {
+                try {
+                    double hours = Double.parseDouble(hoursStr);
+                    double rate = Double.parseDouble(rateStr);
+
+                    activity.put(actvActivity.getText().toString(), new ActivityItem(hours, rate));
+                } catch (NumberFormatException e) {
+                    // error message
+                }
+            }
         });
 
-        btnCalculate.setOnClickListener((v -> {
+        btnCalculate.setOnClickListener(v -> {
 
-        }));
+        });
     }
 }
