@@ -6,6 +6,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -22,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private MaterialAutoCompleteTextView actvActivity;
+
+    Map<String, ActivityItem> activity = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         EditText etActivityHours = findViewById(R.id.etActivityHours);
         EditText etActivityRate = findViewById(R.id.etActivityRate);
 
-        Map<String, ActivityItem> activity = new HashMap<>();
+        LinearLayout llActivityList = findViewById(R.id.llActivityList);
 
         btnAddActivity.setOnClickListener(v -> {
             String hoursStr = etActivityHours.getText().toString().trim();
@@ -66,8 +72,34 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     double hours = Double.parseDouble(hoursStr);
                     double rate = Double.parseDouble(rateStr);
+                    String activityName = actvActivity.getText().toString().trim();
 
-                    activity.put(actvActivity.getText().toString(), new ActivityItem(hours, rate));
+                    activity.put(activityName, new ActivityItem(hours, rate));
+                    // ui sáv megszerzése
+                    View itemView = getLayoutInflater().inflate(R.layout.item_tevekenyseg, llActivityList, false);
+
+                    // Megkeresed a sornak a vezérlőit a felfújt itemView-on belül
+                    TextView tvInfo = itemView.findViewById(R.id.tvInfo);
+                    ImageButton btnDelete = itemView.findViewById(R.id.btnDelete);
+
+                    // Beállítod a kiírandó szöveget
+                    tvInfo.setText(activityName + " - " + hours + " óra (" + rate + "%/óra)");
+
+                    // törlés gomb működése:
+                    btnDelete.setOnClickListener(vDelete -> {
+                        // 1. Kitöröljük a Java listából
+                        activity.remove(activityName);
+                        // 2. Eltávolítjuk a nézetet a LinearLayout-ból
+                        llActivityList.removeView(itemView);
+                    });
+
+                    // ui sáv kiirása
+                    llActivityList.addView(itemView);
+
+                    // lenullázzuk az inputokat
+                    etActivityHours.setText("");
+                    etActivityRate.setText("");
+                    actvActivity.setText("");
                 } catch (NumberFormatException e) {
                     // error message
                 }
