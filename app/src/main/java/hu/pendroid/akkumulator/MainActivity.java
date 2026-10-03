@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         EditText etActivityRate = findViewById(R.id.etActivityRate);
 
         LinearLayout llActivityList = findViewById(R.id.llActivityList);
+        TextView tvEmptyList = findViewById(R.id.tvEmptyList);
 
         // Szűrő: meggátolja, hogy 100-nál nagyobb számot írhassanak be a %-os mezőkbe
         InputFilter max100Filter = (source, start, end, dest, dstart, dend) -> {
@@ -134,10 +135,16 @@ public class MainActivity extends AppCompatActivity {
                         activity.remove(activityName);
                         // 2. Eltávolítjuk a nézetet a LinearLayout-ból
                         llActivityList.removeView(itemView);
+                        if(llActivityList.getChildCount() == 0){
+                            tvEmptyList.setVisibility(View.VISIBLE);
+                        }
                     });
 
                     // ui sáv kiirása
                     llActivityList.addView(itemView);
+                    if(llActivityList.getChildCount() < 2){
+                        tvEmptyList.setVisibility(View.GONE);
+                    }
 
                     // lenullázzuk az inputokat
                     etActivityHours.setText("");
