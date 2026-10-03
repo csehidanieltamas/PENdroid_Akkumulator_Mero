@@ -18,7 +18,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.text.InputFilter;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,15 +66,56 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayout llActivityList = findViewById(R.id.llActivityList);
 
+        // Szűrő: meggátolja, hogy 100-nál nagyobb számot írhassanak be a %-os mezőkbe
+        InputFilter max100Filter = (source, start, end, dest, dstart, dend) -> {
+            try {
+                String input = dest.subSequence(0, dstart).toString() + source.subSequence(start, end) + dest.subSequence(dend, dest.length());
+                if (input.isEmpty()) return null;
+                double val = Double.parseDouble(input);
+                if (val <= 100) return null;
+            } catch (NumberFormatException ignored) {}
+            return "";
+        };
+
+        etCurrentBattery.setFilters(new InputFilter[]{ max100Filter });
+        etTargetReserve.setFilters(new InputFilter[]{ max100Filter });
+        etActivityRate.setFilters(new InputFilter[]{ max100Filter });
+
         btnAddActivity.setOnClickListener(v -> {
             String hoursStr = etActivityHours.getText().toString().trim();
             String rateStr = etActivityRate.getText().toString().trim();
+            String activityName = actvActivity.getText().toString().trim();
+
+            if (activityName.isEmpty()) {
+                actvActivity.setError("Válassz ki egy tevékenységet!");
+                return;
+            }
 
             if (!hoursStr.isEmpty() && !rateStr.isEmpty()) {
                 try {
                     double hours = Double.parseDouble(hoursStr);
                     double rate = Double.parseDouble(rateStr);
-                    String activityName = actvActivity.getText().toString().trim();
+
+                    if (hours <= 0) {
+                        etActivityHours.setError("Az időtartamnak 0-nál nagyobbnak kell lennie!");
+                        return;
+                    }
+
+                    if (rate > 100) {
+                        etActivityRate.setError("A fogyasztás nem lehet 100%-nál több!");
+                        return;
+                    }
+
+                    double maxAllowedHours = getMaxAllowedHours(etDuration.getText().toString().trim());
+
+                    // Eddig hozzáadott tevékenységek hossza (ha felülírjuk a meglévőt, levonjuk a régit)
+                    double currentTotalHours = getTotalHours() - (activity.containsKey(activityName) ? activity.get(activityName).duration : 0);
+
+                    if (currentTotalHours + hours > maxAllowedHours) {
+                        double availableHours = Math.max(0, maxAllowedHours - currentTotalHours);
+                        etActivityHours.setError(String.format("A tevékenységek hossza túlnyúlik a nap végén! (max. %.1f óra, szabad: %.1f óra)", maxAllowedHours, availableHours));
+                        return;
+                    }
 
                     activity.put(activityName, new ActivityItem(hours, rate));
                     // ui sáv megszerzése
@@ -115,20 +158,63 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     int currentBattery = Integer.parseInt(currentBatteryStr);
                     int targetReserve = Integer.parseInt(targetReserveStr);
-                    double duration = Double.parseDouble(durationStr);
 
-                    double passiveConsumption = 100 / duration;
-                    double totalHours = 0;
+                    if (currentBattery > 100) {
+                        etCurrentBattery.setError("A jelenlegi töltöttség nem lehet 100%-nál több!");
+                        return;
+                    }
+                    if (targetReserve > 100) {
+                        etTargetReserve.setError("A megőrzendő tartalék nem lehet 100%-nál több!");
+                        return;
+                    }
+
+                    double hoursUntilMidnight = getHoursUntilMidnight();
+                    double effectiveDuration = getMaxAllowedHours(durationStr);
+
+                    // Passzív (készenléti) fogyasztási ráta (%/óra) - pl. 1.2%/óra
+                    double passiveRate = 1.2;
+
+                    double totalHours = getTotalHours();
                     double totalConsumption = 0;
 
                     for (ActivityItem item : activity.values()) {
-                        totalHours += item.duration;
                         totalConsumption += item.duration * item.consumption;
                     }
-                    int remainingBattery = (int) (currentBattery - (totalConsumption + (passiveConsumption * totalHours)));
+
+                    // Passzív fogyasztás órái (az aktív időn kívül)
+                    double passiveHours = Math.max(0, effectiveDuration - totalHours);
+                    double totalPassiveConsumption = passiveHours * passiveRate;
+
+                    int remainingBattery = (int) (currentBattery - (totalConsumption + totalPassiveConsumption));
+
+                    TextView tvResultValue = findViewById(R.id.tvResultValue);
+                    TextView tvVerdict = findViewById(R.id.tvVerdict);
+                    TextView tvSuggestions = findViewById(R.id.tvSuggestions);
+                    TextView tvTotalDrain = findViewById(R.id.tvTotalDrain);
+                    TextView tvMaxTime = findViewById(R.id.tvMaxTime);
+
+                    if (tvResultValue != null) {
+                        tvResultValue.setText(remainingBattery + "%");
+                    }
+                    if (tvTotalDrain != null) {
+                        tvTotalDrain.setText(String.format("%.1f%%", totalConsumption + totalPassiveConsumption));
+                    }
+                    if (tvMaxTime != null) {
+                        tvMaxTime.setText(String.format("%.1f óra", hoursUntilMidnight));
+                    }
+
                     if (remainingBattery >= targetReserve) {
-                        // success message
+                        if (tvVerdict != null) {
+                            tvVerdict.setText("✅ Az akkumulátor kitart éjfélig!");
+                        }
+                        if (tvSuggestions != null) {
+                            tvSuggestions.setText("Minden rendben, az akkumulátor töltöttsége meghaladja a kívánt tartalékot (" + targetReserve + "%).");
+                        }
                     } else {
+                        if (tvVerdict != null) {
+                            tvVerdict.setText("⚠️ Az akkumulátor le fog merülni éjfél előtt!");
+                        }
+
                         // 1. Kiszámoljuk, hány % hiányzik a kívánt tartalékhoz képest
                         double deficit = targetReserve - remainingBattery; // pl. ha 15% maradt, de 20% a cél, akkor deficit = 5%
 
@@ -157,6 +243,8 @@ public class MainActivity extends AppCompatActivity {
 
                         if (requiredBattery <= 100) {
                             suggestion.append("• Töltsd fel a telefont legalább ").append(requiredBattery).append("%-ra.\n");
+                        } else {
+                            suggestion.append("• Töltsd fel a telefont 100%-ra (de önmagában a 100% sem lesz elég, a használatot is csökkentened kell!).\n");
                         }
 
                         // B) Általános időcsökkentési javaslat:
@@ -172,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // 5. Kiírjuk az eredményt a felületre
-                        TextView tvSuggestions = findViewById(R.id.tvSuggestions);
                         if (tvSuggestions != null) {
                             tvSuggestions.setText(suggestion.toString());
                         }
@@ -182,5 +269,32 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private double getTotalHours() {
+        double totalHours = 0;
+        for (ActivityItem item : activity.values()) {
+            totalHours += item.duration;
+        }
+        return totalHours;
+    }
+
+    private double getHoursUntilMidnight() {
+        LocalTime now = LocalTime.now();
+        double currentHourDecimal = now.getHour() + (now.getMinute() / 60.0);
+        return 24.0 - currentHourDecimal;
+    }
+
+    private double getMaxAllowedHours(String durationStr) {
+        double hoursUntilMidnight = getHoursUntilMidnight();
+        if (!durationStr.isEmpty()) {
+            try {
+                double duration = Double.parseDouble(durationStr);
+                if (duration > 0) {
+                    return duration;
+                }
+            } catch (NumberFormatException ignored) {}
+        }
+        return hoursUntilMidnight;
     }
 }
