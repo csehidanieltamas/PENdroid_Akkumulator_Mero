@@ -129,7 +129,53 @@ public class MainActivity extends AppCompatActivity {
                     if (remainingBattery >= targetReserve) {
                         // success message
                     } else {
-                        // warning message
+                        // 1. Kiszámoljuk, hány % hiányzik a kívánt tartalékhoz képest
+                        double deficit = targetReserve - remainingBattery; // pl. ha 15% maradt, de 20% a cél, akkor deficit = 5%
+
+                        // 2. Átlagos aktív fogyasztás óránként (%/óra)
+                        double avgActiveRate = totalHours > 0 ? (totalConsumption / totalHours) : 0;
+
+                        // 3. Megkeressük a legnagyobb fogyasztású tevékenységet
+                        String worstActivityName = "";
+                        double worstActivityRate = 0;
+
+                        for (Map.Entry<String, ActivityItem> entry : activity.entrySet()) {
+                            if (entry.getValue().consumption > worstActivityRate) {
+                                worstActivityRate = entry.getValue().consumption;
+                                worstActivityName = entry.getKey();
+                            }
+                        }
+
+                        // 4. Összeállítjuk a szöveges javaslatot
+                        StringBuilder suggestion = new StringBuilder();
+                        suggestion.append("⚠️ Nem éred el a kívánt ").append(targetReserve).append("%-os tartalékot!\n");
+                        suggestion.append("Hiányzol: ").append(String.format("%.1f", deficit)).append("%\n\n");
+                        suggestion.append("Javaslatok a cél eléréséhez:\n");
+
+                        // A) Töltési javaslat:
+                        int requiredBattery = (int) Math.ceil(currentBattery + deficit);
+
+                        if (requiredBattery <= 100) {
+                            suggestion.append("• Töltsd fel a telefont legalább ").append(requiredBattery).append("%-ra.\n");
+                        }
+
+                        // B) Általános időcsökkentési javaslat:
+                        if (avgActiveRate > 0) {
+                            double hoursToReduce = deficit / avgActiveRate;
+                            suggestion.append(String.format("• Csökkentsd az aktív használatot kb. %.1f órával.\n", hoursToReduce));
+                        }
+
+                        // C) Konkrét tevékenység csökkentése (ha van ilyen):
+                        if (!worstActivityName.isEmpty() && worstActivityRate > 0) {
+                            double hoursFromWorst = deficit / worstActivityRate;
+                            suggestion.append(String.format("• Vagy csökkentsd a(z) '%s' használatát %.1f órával.", worstActivityName, hoursFromWorst));
+                        }
+
+                        // 5. Kiírjuk az eredményt a felületre
+                        TextView tvSuggestions = findViewById(R.id.tvSuggestions);
+                        if (tvSuggestions != null) {
+                            tvSuggestions.setText(suggestion.toString());
+                        }
                     }
                 } catch (NumberFormatException e){
                     // error message
