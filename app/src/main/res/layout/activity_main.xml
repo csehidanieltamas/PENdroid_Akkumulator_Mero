@@ -111,6 +111,7 @@
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etCurrentBattery"
+                                    android:imeOptions="actionNext"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="number"
@@ -138,6 +139,7 @@
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etTargetReserve"
+                                    android:imeOptions="actionNext"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="number"
@@ -164,6 +166,7 @@
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etDuration"
+                                android:imeOptions="actionDone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:textColor="#000000"
@@ -199,7 +202,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <!-- Items are set from code: actvActivity.setSimpleItems(...) -->
+                        <!-- Items are set from code (setAdapter in MainActivity) -->
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
@@ -218,8 +221,9 @@
                                 android:id="@+id/actvActivity"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="#000000"
-                                android:inputType="none" />
+                                android:inputType="none"
+                                android:textColor="#0F172A"
+                                android:textSize="16sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <LinearLayout
@@ -247,6 +251,7 @@
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etActivityHours"
+                                    android:imeOptions="actionNext"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:textColor="#000000"
@@ -272,6 +277,7 @@
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etActivityRate"
+                                    android:imeOptions="actionDone"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:textColor="#000000"
@@ -308,6 +314,147 @@
                             android:text="Még nincs hozzáadott tevékenység"
                             android:textColor="#64748B"
                             android:textSize="13sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Idle drain (optional, default 0): iOS-style settings row that expands -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardIdle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <!-- Tap row: icon, title, current value, chevron -->
+                        <LinearLayout
+                            android:id="@+id/btnIdleToggle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                app:cardBackgroundColor="#D1FAE5"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="😴"
+                                    android:textSize="20sp" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Készenléti fogyasztás"
+                                    android:textColor="#0F172A"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Testreszabható"
+                                    android:textColor="#64748B"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tvIdleValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0 %/óra"
+                                android:textColor="#059669"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvIdleChevron"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:text="▾"
+                                android:textColor="#94A3B8"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <!-- Expandable part: hidden until the row is tapped -->
+                        <LinearLayout
+                            android:id="@+id/llIdleExpand"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="16dp"
+                            android:visibility="gone">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginBottom="12dp"
+                                android:background="#E2E8F0" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:lineSpacingExtra="2dp"
+                                android:text="Ennyi %-ot fogyaszt óránként a telefon, amikor nem használod. Alapértelmezetten 0, vagyis csak a tervezett tevékenységek fogyasztását számoljuk."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:hint="Készenléti fogyasztás"
+                                android:textColorHint="#64748B"
+                                app:boxCornerRadiusBottomEnd="14dp"
+                                app:boxCornerRadiusBottomStart="14dp"
+                                app:boxCornerRadiusTopEnd="14dp"
+                                app:boxCornerRadiusTopStart="14dp"
+                                app:boxStrokeColor="#059669"
+                                app:hintTextColor="#059669"
+                                app:suffixText="%/óra"
+                                app:suffixTextColor="#64748B">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etIdleRate"
+                                    android:imeOptions="actionDone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal"
+                                    android:selectAllOnFocus="true"
+                                    android:text="0"
+                                    android:textColor="#000000" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
