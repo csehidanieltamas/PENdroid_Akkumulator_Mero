@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -26,8 +28,11 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class MainActivity extends AppCompatActivity {
 
+    // Alapértelmezett háttérfogyasztás (%/óra): kikapcsolt kijelzős telefon átlaga
+    private static final double DEFAULT_IDLE_RATE = 2.0;
     private DrawerLayout drawerLayout;
     private MaterialAutoCompleteTextView actvActivity;
 
@@ -98,6 +103,33 @@ public class MainActivity extends AppCompatActivity {
         etCurrentBattery.setFilters(new InputFilter[]{ max100Filter });
         etTargetReserve.setFilters(new InputFilter[]{ max100Filter });
         etActivityRate.setFilters(new InputFilter[]{ max100Filter });
+
+        LinearLayout btnIdleToggle = findViewById(R.id.btnIdleToggle);
+        LinearLayout llIdleExpand = findViewById(R.id.llIdleExpand);
+        TextView tvIdleValue = findViewById(R.id.tvIdleValue);
+        EditText etIdleRate = findViewById(R.id.etIdleRate);
+        Button btnIdleReset = findViewById(R.id.btnIdleReset);
+
+        etIdleRate.setFilters(new InputFilter[]{ max100Filter });
+
+        // Sorra koppintva (vagy a ceruzára) kinyílik / becsukódik a szerkesztő
+        btnIdleToggle.setOnClickListener(v -> {
+            boolean open = llIdleExpand.getVisibility() == View.VISIBLE;
+            llIdleExpand.setVisibility(open ? View.GONE : View.VISIBLE);
+        });
+
+        // Gépelés közben frissül a kiírt érték, és a reset gomb csak akkor látszik, ha módosították
+        etIdleRate.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                double rate = parseIdleRate(s.toString());
+                tvIdleValue.setText(formatRate(rate) + " %/óra");
+                btnIdleReset.setVisibility(rate == DEFAULT_IDLE_RATE ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        btnIdleReset.setOnClickListener(v -> etIdleRate.setText(formatRate(DEFAULT_IDLE_RATE)));
 
         // A tartalék nem lehet több a jelenlegi töltöttségnél. Gépelés közben nem ellenőrizzük
         // (lehet, hogy a tartalékot írják be előbb), hanem amikor kilépnek valamelyik mezőből.
@@ -222,8 +254,8 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Passzív (készenléti) fogyasztási ráta (%/óra) - pl. 1.2%/óra
-                    double passiveRate = 1.2;
+                    // Háttérfogyasztás (%/óra): a felhasználó által beállított érték, üres mezőnél az alapérték
+                    double passiveRate = parseIdleRate(etIdleRate.getText().toString());
 
                     // Az aktív órák összege, és a tevékenységek fogyasztása (óra * %/óra)
                     double totalHours = getTotalHours();
@@ -354,5 +386,19 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    // A háttérfogyasztás beolvasása: üres vagy hibás szövegnél az alapértéket adja vissza
+    private double parseIdleRate(String text) {
+        try {
+            return Double.parseDouble(text.trim());
+        } catch (NumberFormatException e) {
+            return DEFAULT_IDLE_RATE;
+        }
+    }
+
+    // 1.0 helyett "1", 1.5 marad "1.5"
+    private String formatRate(double rate) {
+        return rate == Math.floor(rate) ? String.valueOf((long) rate) : String.valueOf(rate);
     }
 }
