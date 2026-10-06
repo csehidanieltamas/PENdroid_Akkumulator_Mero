@@ -143,6 +143,12 @@ public class ActivityPicker {
     // Ablakok: új / szerkesztés / törlés
     // ------------------------------------------------------------------
 
+    private void selectActivity(String name) {
+        actv.setText(name, false);
+        updateHelper();
+        actv.dismissDropDown();
+    }
+
     // A mező alatt kiírja a kiválasztott tevékenység fogyasztását (vagy eltünteti, ha nincs kiválasztva)
     private void updateHelper() {
         Double rate = catalog.get(actv.getText().toString().trim());
@@ -324,6 +330,7 @@ public class ActivityPicker {
                 actv.dismissDropDown();
                 confirmDelete(name);
             });
+            convertView.setOnClickListener(v -> selectActivity(name));
             return convertView;
         }
 
