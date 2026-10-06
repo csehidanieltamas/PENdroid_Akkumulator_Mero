@@ -1,10 +1,7 @@
 package hu.pendroid.akkumulator;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.text.Editable;
@@ -25,6 +22,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.text.InputFilter;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.textfield.TextInputLayout;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +34,14 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private MaterialAutoCompleteTextView actvActivity;
 
+    // A tevékenység választó (legördülő menü, + gomb, szerkesztés, törlés, mentés) külön osztályban van
+    private ActivityPicker activityPicker;
+
     // A felvett tevékenységek (név -> időtartam + fogyasztás)
     Map<String, ActivityItem> activity = new HashMap<>();
+
+    // A terv sorai a képernyőn (név -> sor), hogy ugyanazt a tevékenységet felül tudjuk írni
+    private final Map<String, View> planRows = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +63,9 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Dropdown
-        String[] activities = {"🎬 Videó", "🎮 Játék", "🎵 Zene", "🗺️ Navigáció"};
-        actvActivity.setAdapter(new ArrayAdapter<>(
-                this, android.R.layout.simple_dropdown_item_1line, activities));
-
-        // A lenyíló lista háttere: fehér és lekerekített, hogy illjen a kártyákhoz.
-        // A sarok sugarát dp-ben adjuk meg, ezért szorozni kell a kijelző sűrűségével.
-        GradientDrawable popupBackground = new GradientDrawable();
-        popupBackground.setColor(Color.WHITE);
-        popupBackground.setCornerRadius(16 * getResources().getDisplayMetrics().density);
-        actvActivity.setDropDownBackgroundDrawable(popupBackground);
+        // Tevékenység választó: a legördülő menü sorait, a + gombot és a mentést az ActivityPicker intézi
+        TextInputLayout tilActivity = findViewById(R.id.tilActivity);
+        activityPicker = new ActivityPicker(this, actvActivity, tilActivity, findViewById(R.id.btnNewActivity));
 
         // ☰ opens the sidebar
         findViewById(R.id.btnMenu).setOnClickListener(
@@ -81,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         EditText etTargetReserve = findViewById(R.id.etTargetReserve);
         EditText etDuration = findViewById(R.id.etDuration);
         EditText etActivityHours = findViewById(R.id.etActivityHours);
-        EditText etActivityRate = findViewById(R.id.etActivityRate);
 
         LinearLayout llActivityList = findViewById(R.id.llActivityList);
         TextView tvEmptyList = findViewById(R.id.tvEmptyList);
@@ -102,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         etCurrentBattery.setFilters(new InputFilter[]{ max100Filter });
         etTargetReserve.setFilters(new InputFilter[]{ max100Filter });
-        etActivityRate.setFilters(new InputFilter[]{ max100Filter });
 
         LinearLayout btnIdleToggle = findViewById(R.id.btnIdleToggle);
         LinearLayout llIdleExpand = findViewById(R.id.llIdleExpand);
@@ -141,85 +135,91 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnAddActivity.setOnClickListener(v -> {
-            String hoursStr = etActivityHours.getText().toString().trim();
-            String rateStr = etActivityRate.getText().toString().trim();
             String activityName = actvActivity.getText().toString().trim();
+            String hoursStr = etActivityHours.getText().toString().trim();
 
-            if (activityName.isEmpty()) {
+            // A fogyasztást a kiválasztott tevékenységből vesszük, ezért annak szerepelnie kell a listában
+            Double catalogRate = activityPicker.getRate(activityName);
+            if (catalogRate == null) {
                 actvActivity.setError("Válassz ki egy tevékenységet!");
                 return;
             }
+            if (hoursStr.isEmpty()) {
+                etActivityHours.setError("Add meg az időtartamot!");
+                return;
+            }
 
-            if (!hoursStr.isEmpty() && !rateStr.isEmpty()) {
-                try {
-                    double hours = Double.parseDouble(hoursStr);
-                    double rate = Double.parseDouble(rateStr);
+            try {
+                double hours = Double.parseDouble(hoursStr);
+                double rate = catalogRate;
 
-                    if (hours <= 0) {
-                        etActivityHours.setError("Az időtartamnak 0-nál nagyobbnak kell lennie!");
-                        return;
-                    }
-
-                    if (rate > 100) {
-                        etActivityRate.setError("A fogyasztás nem lehet 100%-nál több!");
-                        return;
-                    }
-
-                    // A teljes időtartam kell, hogy tudjuk, belefér-e a tevékenység.
-                    // Üres mezőnél előbb ezt kérjük be, mert nélküle nem tudunk ellenőrizni.
-                    String durationText = etDuration.getText().toString().trim();
-                    if (durationText.isEmpty()) {
-                        etDuration.setError("Először add meg, mennyi ideig kell kitartania!");
-                        return;
-                    }
-                    double duration = Double.parseDouble(durationText);
-
-                    // Eddig hozzáadott tevékenységek hossza (ha felülírjuk a meglévőt, levonjuk a régit)
-                    double currentTotalHours = getTotalHours() - (activity.containsKey(activityName) ? activity.get(activityName).duration : 0);
-
-                    if (currentTotalHours + hours > duration) {
-                        double availableHours = Math.max(0, duration - currentTotalHours);
-                        etActivityHours.setError(String.format("A tevékenységek hossza túlnyúlik a megadott időtartamon! (max. %.1f óra, szabad: %.1f óra)", duration, availableHours));
-                        return;
-                    }
-
-                    activity.put(activityName, new ActivityItem(hours, rate));
-                    // ui sáv megszerzése
-                    View itemView = getLayoutInflater().inflate(R.layout.item_tevekenyseg, llActivityList, false);
-
-                    // Megkeresed a sornak a vezérlőit a felfújt itemView-on belül
-                    TextView tvInfo = itemView.findViewById(R.id.tvInfo);
-                    ImageButton btnDelete = itemView.findViewById(R.id.btnDelete);
-
-                    // Beállítod a kiírandó szöveget
-                    tvInfo.setText(activityName + " - " + hours + " óra (" + rate + "%/óra)");
-
-                    // törlés gomb működése:
-                    btnDelete.setOnClickListener(vDelete -> {
-                        // 1. Kitöröljük a Java listából
-                        activity.remove(activityName);
-                        // 2. Eltávolítjuk a nézetet a LinearLayout-ból
-                        llActivityList.removeView(itemView);
-                        // 3. Ha ez volt az utolsó sor, visszajön a "nincs tevékenység" felirat
-                        if(llActivityList.getChildCount() == 0){
-                            tvEmptyList.setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                    // ui sáv kiirása
-                    llActivityList.addView(itemView);
-                    // Az első sor felvétele után eltűnik a "nincs tevékenység" felirat
-                    if(llActivityList.getChildCount() < 2){
-                        tvEmptyList.setVisibility(View.GONE);
-                    }
-
-                    // lenullázzuk az inputokat
-                    etActivityHours.setText("");
-                    etActivityRate.setText("");
-                    actvActivity.setText("");
-                } catch (NumberFormatException e) {
-                    // error message
+                if (hours <= 0) {
+                    etActivityHours.setError("Az időtartamnak 0-nál nagyobbnak kell lennie!");
+                    return;
                 }
+
+                // A teljes időtartam kell, hogy tudjuk, belefér-e a tevékenység.
+                // Üres mezőnél előbb ezt kérjük be, mert nélküle nem tudunk ellenőrizni.
+                String durationText = etDuration.getText().toString().trim();
+                if (durationText.isEmpty()) {
+                    etDuration.setError("Először add meg, mennyi ideig kell kitartania!");
+                    return;
+                }
+                double duration = Double.parseDouble(durationText);
+
+                // Eddig hozzáadott tevékenységek hossza (ha felülírjuk a meglévőt, levonjuk a régit)
+                double currentTotalHours = getTotalHours() - (activity.containsKey(activityName) ? activity.get(activityName).duration : 0);
+
+                if (currentTotalHours + hours > duration) {
+                    double availableHours = Math.max(0, duration - currentTotalHours);
+                    etActivityHours.setError(String.format("A tevékenységek hossza túlnyúlik a megadott időtartamon! (max. %.1f óra, szabad: %.1f óra)", duration, availableHours));
+                    return;
+                }
+
+                // Ha ez a tevékenység már szerepel a tervben, a régi sort töröljük, az új felülírja
+                View oldRow = planRows.get(activityName);
+                if (oldRow != null) {
+                    llActivityList.removeView(oldRow);
+                }
+
+                activity.put(activityName, new ActivityItem(hours, rate));
+                // ui sáv megszerzése
+                View itemView = getLayoutInflater().inflate(R.layout.item_tevekenyseg, llActivityList, false);
+
+                // Megkeresed a sornak a vezérlőit a felfújt itemView-on belül
+                TextView tvInfo = itemView.findViewById(R.id.tvInfo);
+                ImageButton btnDelete = itemView.findViewById(R.id.btnDelete);
+
+                // Beállítod a kiírandó szöveget
+                tvInfo.setText(activityName + " - " + hours + " óra (" + rate + "%/óra)");
+
+                // törlés gomb működése:
+                btnDelete.setOnClickListener(vDelete -> {
+                    // 1. Kitöröljük a Java listából
+                    activity.remove(activityName);
+                    planRows.remove(activityName);
+                    // 2. Eltávolítjuk a nézetet a LinearLayout-ból
+                    llActivityList.removeView(itemView);
+                    // 3. Ha ez volt az utolsó sor, visszajön a "nincs tevékenység" felirat
+                    if(llActivityList.getChildCount() == 0){
+                        tvEmptyList.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                // ui sáv kiirása
+                llActivityList.addView(itemView);
+                planRows.put(activityName, itemView);
+                // Az első sor felvétele után eltűnik a "nincs tevékenység" felirat
+                if(llActivityList.getChildCount() < 2){
+                    tvEmptyList.setVisibility(View.GONE);
+                }
+
+                // lenullázzuk az inputokat
+                etActivityHours.setText("");
+                activityPicker.clearSelection();
+            } catch (NumberFormatException e) {
+                // pl. ha csak egy pont van a mezőben
+                etActivityHours.setError("Ez nem érvényes szám!");
             }
         });
 

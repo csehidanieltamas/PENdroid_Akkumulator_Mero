@@ -49,7 +49,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="693dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
             android:paddingHorizontal="20dp"
@@ -99,24 +99,24 @@
                                 android:layout_marginEnd="6dp"
                                 android:layout_weight="1"
                                 android:hint="Jelenlegi töltöttség"
-                                android:textColorHint="#64748B"
                                 app:boxCornerRadiusBottomEnd="14dp"
                                 app:boxCornerRadiusBottomStart="14dp"
                                 app:boxCornerRadiusTopEnd="14dp"
                                 app:boxCornerRadiusTopStart="14dp"
                                 app:boxStrokeColor="#059669"
                                 app:hintTextColor="#059669"
+                                android:textColorHint="#64748B"
                                 app:suffixText="%"
                                 app:suffixTextColor="#64748B">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etCurrentBattery"
+                                    android:imeOptions="actionNext"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:imeOptions="actionNext"
                                     android:inputType="number"
-                                    android:maxLength="3"
-                                    android:textColor="#000000" />
+                                    android:textColor="#000000"
+                                    android:maxLength="3" />
 
                             </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,24 +127,24 @@
                                 android:layout_marginStart="6dp"
                                 android:layout_weight="1"
                                 android:hint="Megőrzendő tartalék"
-                                android:textColorHint="#64748B"
                                 app:boxCornerRadiusBottomEnd="14dp"
                                 app:boxCornerRadiusBottomStart="14dp"
                                 app:boxCornerRadiusTopEnd="14dp"
                                 app:boxCornerRadiusTopStart="14dp"
                                 app:boxStrokeColor="#059669"
                                 app:hintTextColor="#059669"
+                                android:textColorHint="#64748B"
                                 app:suffixText="%"
                                 app:suffixTextColor="#64748B">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etTargetReserve"
+                                    android:imeOptions="actionNext"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:imeOptions="actionNext"
                                     android:inputType="number"
-                                    android:maxLength="3"
-                                    android:textColor="#000000" />
+                                    android:textColor="#000000"
+                                    android:maxLength="3" />
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
 
@@ -154,23 +154,23 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:hint="Ennyi ideig kell bírnia töltés nélkül"
-                            android:textColorHint="#64748B"
                             app:boxCornerRadiusBottomEnd="14dp"
                             app:boxCornerRadiusBottomStart="14dp"
                             app:boxCornerRadiusTopEnd="14dp"
                             app:boxCornerRadiusTopStart="14dp"
                             app:boxStrokeColor="#059669"
                             app:hintTextColor="#059669"
+                            android:textColorHint="#64748B"
                             app:suffixText="óra"
                             app:suffixTextColor="#64748B">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etDuration"
+                                android:imeOptions="actionDone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:imeOptions="actionDone"
-                                android:inputType="numberDecimal"
-                                android:textColor="#000000" />
+                                android:textColor="#000000"
+                                android:inputType="numberDecimal" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -208,13 +208,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Tevékenység"
-                            android:textColorHint="#64748B"
                             app:boxCornerRadiusBottomEnd="14dp"
                             app:boxCornerRadiusBottomStart="14dp"
                             app:boxCornerRadiusTopEnd="14dp"
                             app:boxCornerRadiusTopStart="14dp"
                             app:boxStrokeColor="#059669"
                             app:endIconTint="#64748B"
+                            android:textColorHint="#64748B"
                             app:hintTextColor="#059669">
 
                             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -239,23 +239,23 @@
                                 android:layout_marginEnd="6dp"
                                 android:layout_weight="1"
                                 android:hint="Időtartam"
-                                android:textColorHint="#64748B"
                                 app:boxCornerRadiusBottomEnd="14dp"
                                 app:boxCornerRadiusBottomStart="14dp"
                                 app:boxCornerRadiusTopEnd="14dp"
                                 app:boxCornerRadiusTopStart="14dp"
                                 app:boxStrokeColor="#059669"
                                 app:hintTextColor="#059669"
+                                android:textColorHint="#64748B"
                                 app:suffixText="óra"
                                 app:suffixTextColor="#64748B">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etActivityHours"
+                                    android:imeOptions="actionNext"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:imeOptions="actionNext"
-                                    android:inputType="numberDecimal"
-                                    android:textColor="#000000" />
+                                    android:textColor="#000000"
+                                    android:inputType="numberDecimal" />
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
@@ -265,23 +265,23 @@
                                 android:layout_marginStart="6dp"
                                 android:layout_weight="1"
                                 android:hint="Fogyasztás"
-                                android:textColorHint="#64748B"
                                 app:boxCornerRadiusBottomEnd="14dp"
                                 app:boxCornerRadiusBottomStart="14dp"
                                 app:boxCornerRadiusTopEnd="14dp"
                                 app:boxCornerRadiusTopStart="14dp"
                                 app:boxStrokeColor="#059669"
                                 app:hintTextColor="#059669"
+                                android:textColorHint="#64748B"
                                 app:suffixText="%/óra"
                                 app:suffixTextColor="#64748B">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etActivityRate"
+                                    android:imeOptions="actionDone"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:imeOptions="actionDone"
-                                    android:inputType="numberDecimal"
-                                    android:textColor="#000000" />
+                                    android:textColor="#000000"
+                                    android:inputType="numberDecimal" />
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
 
@@ -317,7 +317,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Háttérfogyasztás: koppintásra kinyílik, ceruzával szerkeszthető -->
+                <!-- Idle drain (optional, default 0): iOS-style settings row that expands -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardIdle"
                     android:layout_width="match_parent"
@@ -333,6 +333,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
+                        <!-- Tap row: icon, title, current value, chevron -->
                         <LinearLayout
                             android:id="@+id/btnIdleToggle"
                             android:layout_width="match_parent"
@@ -370,7 +371,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Háttérfogyasztás"
+                                    android:text="Készenléti fogyasztás"
                                     android:textColor="#0F172A"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
@@ -378,7 +379,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Amikor nem használod a telefont"
+                                    android:text="Testreszabható"
                                     android:textColor="#64748B"
                                     android:textSize="12sp" />
                             </LinearLayout>
@@ -387,23 +388,22 @@
                                 android:id="@+id/tvIdleValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="2 %/óra"
+                                android:text="0 %/óra"
                                 android:textColor="#059669"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
 
-                            <!-- Ceruza: jelzi, hogy szerkeszthető -->
                             <TextView
-                                android:id="@+id/tvIdleEdit"
+                                android:id="@+id/tvIdleChevron"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:contentDescription="Szerkesztés"
-                                android:text="✏️"
+                                android:layout_marginStart="8dp"
+                                android:text="▾"
+                                android:textColor="#94A3B8"
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <!-- Kinyíló rész -->
+                        <!-- Expandable part: hidden until the row is tapped -->
                         <LinearLayout
                             android:id="@+id/llIdleExpand"
                             android:layout_width="match_parent"
@@ -424,7 +424,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:lineSpacingExtra="2dp"
-                                android:text="Ennyi %-ot fogyaszt óránként a telefon készenlétben, kikapcsolt kijelzővel. Egy átlagos telefonnál ez kb. 2 %/óra. Ha tudod, hogy a tiéd többet vagy kevesebbet fogyaszt, itt átírhatod."
+                                android:text="Ennyi %-ot fogyaszt óránként a telefon, amikor nem használod. Alapértelmezetten 0, vagyis csak a tervezett tevékenységek fogyasztását számoljuk."
                                 android:textColor="#64748B"
                                 android:textSize="13sp" />
 
@@ -433,7 +433,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
-                                android:hint="Háttérfogyasztás"
+                                android:hint="Készenléti fogyasztás"
                                 android:textColorHint="#64748B"
                                 app:boxCornerRadiusBottomEnd="14dp"
                                 app:boxCornerRadiusBottomStart="14dp"
@@ -446,30 +446,18 @@
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etIdleRate"
+                                    android:imeOptions="actionDone"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:imeOptions="actionDone"
                                     android:inputType="numberDecimal"
-                                    android:maxLength="5"
                                     android:selectAllOnFocus="true"
-                                    android:text="2"
+                                    android:text="0"
                                     android:textColor="#000000" />
                             </com.google.android.material.textfield.TextInputLayout>
-
-                            <!-- Reset: csak akkor látszik, ha az érték eltér az alapértéktől -->
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnIdleReset"
-                                style="@style/Widget.Material3.Button.TextButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:layout_marginTop="4dp"
-                                android:text="↺ Visszaállítás (2 %/óra)"
-                                android:textColor="#047857"
-                                android:visibility="gone" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
                 <!-- Calculate -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCalculate"
