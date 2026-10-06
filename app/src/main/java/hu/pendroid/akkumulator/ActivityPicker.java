@@ -33,6 +33,9 @@ import java.util.Map;
  * A tevékenység választó: a legördülő menü, a hozzá tartozó + gomb, a szerkesztő és törlő ablakok,
  * és a tevékenységek mentése. Külön osztályban van, hogy a MainActivity-t alig kelljen módosítani.
  */
+
+// ez jo komplikalt lett
+
 public class ActivityPicker {
 
     // Saját mentési fájl, hogy ne keveredjen más beállításokkal
