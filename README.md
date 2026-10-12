@@ -13,45 +13,13 @@
 
 ---
 
-## 👥 A Csapat: `()=>{}`
-
-Háromfős csapatunk a következő felosztásban dolgozott az alkalmazáson:
-
-| Név | Szerepkör / Feladatok | GitHub Profil |
-| :--- | :--- | :--- |
-| **Babos Pál** | ... | @babospal(https://github.com/babospal) |
-| **Buda Bálint** | ... | @budabalint(https://github.com/budabalint) |
-| **Csehi Dániel Tamás** | ... | @csehidanieltamas(https://github.com/csehidanieltamas) |
-
----
-
 ## ✨ Funkciók
 
-### 🎯 Kötelezően megvalósított funkciók (Alapkövetelmények)
 - [x] **Paraméterek bekérése:** Jelenlegi töltöttség, működési idő, tevékenységek (videó, játék, zene, navigáció) és azok időtartama.
 - [x] **Fogyasztás kalkuláció:** Tevékenységenkénti becsült fogyasztás (%/óra) alapú számítás.
 - [x] **Tartalék kezelés:** Nap végére megőrzendő minimális akkumulátorszint figyelembevétele.
 - [x] **Döntéstámogatás:** Jelzi, hogy a terv tartható-e. Ha nem, javaslatot tesz a tevékenységek csökkentésére.
 - [x] **Hibakezelés:** Figyelmeztetés hiányos vagy logikátlan bemeneti paraméterek (pl. 100%-nál nagyobb töltöttség megadása) esetén.
-
-### 🌟 Plusz pontot érő funkciók (Extra)
-- [ ] 🔋 **Automatikus töltöttség-lekérdezés** a rendszerből (nem kell kézzel beírni a kezdő értéket).
-- [ ] 📊 **Grafikus fogyasztási diagram** a vizuális átláthatóságért.
-- [ ] 💡 **Energiatakarékos javaslatok** megjelenítése kritikus szint esetén.
-- [ ] 🔔 **Értesítések (Notifications)** küldése, ha az akku a beállított tartalékhoz közelít.
-- [ ] 🎬 **Egyedi animációk** a letisztult felhasználói élményért.
-- [ ] 👤 **Használati profilok kezelése** (pl. "Munka nap", "Utazás", "Hétvége" profilok mentése).
-
----
-
-## 📸 Képernyőfotók (Screenshots)
-
-<div align="center">
-  <!-- KÉPEK LINKJEI! -->
-  <img src="https://via.placeholder.com/250x500.png?text=Kezdőképernyő" width="200" alt="Kezdőképernyő"> &nbsp;
-  <img src="https://via.placeholder.com/250x500.png?text=Tevékenységek" width="200" alt="Tevékenységek hozzáadása"> &nbsp;
-  <img src="https://via.placeholder.com/250x500.png?text=Eredmény+diagram" width="200" alt="Eredmény diagram">
-</div>
 
 ---
 
@@ -67,4 +35,5 @@ Háromfős csapatunk a következő felosztásban dolgozott az alkalmazáson:
 
 1. Klónozd a repót a gépedre:
    ```bash
-   git clone [https://github.com/csehidanieltamas/PENdroid_Akkumulator_Mero.git](https://github.com/csehidanieltamas/PENdroid_Akkumulator_Mero.git)
+   git clone https://github.com/csehidanieltamas/PENdroid_Akkumulator_Mero.git
+   ```
