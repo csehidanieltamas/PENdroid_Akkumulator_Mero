@@ -15,7 +15,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
-import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -67,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
         TextInputLayout tilActivity = findViewById(R.id.tilActivity);
         activityPicker = new ActivityPicker(this, actvActivity, tilActivity, findViewById(R.id.btnNewActivity));
 
-        // ☰ opens the sidebar
-        findViewById(R.id.btnMenu).setOnClickListener(
-                v -> drawerLayout.openDrawer(GravityCompat.START));
 
         Button btnCalculate = findViewById(R.id.btnCalculate);
         Button btnAddActivity = findViewById(R.id.btnAddActivity);

@@ -24,23 +24,10 @@
             android:paddingBottom="8dp">
 
             <TextView
-                android:id="@+id/btnMenu"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="Menü"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="☰"
-                android:textColor="#059669"
-                android:textSize="26sp" />
-
-            <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="20dp"
                 android:text="Akkumulátor-tervező"
                 android:textColor="#0F172A"
                 android:textSize="26sp"
@@ -665,76 +652,6 @@
 
             </LinearLayout>
         </ScrollView>
-    </LinearLayout>
-
-    <!-- Sidebar (extra functions later) -->
-    <LinearLayout
-        android:id="@+id/navView"
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#FFFFFF"
-        android:orientation="vertical"
-        android:paddingHorizontal="12dp"
-        android:paddingTop="48dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginBottom="16dp"
-            android:text="Menü"
-            android:textColor="#0F172A"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/navProfiles"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="14dp"
-            android:text="📱  Használati profilok"
-            android:textColor="#0F172A"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/navChart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="14dp"
-            android:text="📊  Fogyasztási diagram"
-            android:textColor="#0F172A"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/navTips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="14dp"
-            android:text="🌿  Energiatakarékos tippek"
-            android:textColor="#0F172A"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/navAbout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="14dp"
-            android:text="ℹ️  Névjegy"
-            android:textColor="#0F172A"
-            android:textSize="16sp" />
     </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
